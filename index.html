@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Antioch</title>
+        <link rel="stylesheet" href="./style/index.css"  type="text/css" />
+        <link rel="stylesheet" href="./style/font.css" type="text/css">
+        <!--[if lt IE 9]>
+        <script>
+            document.createElement('header');
+            document.createElement('nav');
+            document.createElement('article');
+            document.createElement('article');
+            document.createElement('aside');
+            document.createElement('footer');
+            document.createElement('figure');
+            document.createElement('figcaption');
+            document.createElement('hgroup');
+        </script>
+        <![endif]-->
+    </head>
+    <body class="content">
+
+        <section class="main-container">
+            <div id="canvases" class="canvasContainer">
+                <canvas id="demoCanvas"></canvas>
+            </div>
+        </section>
+
+        <header class="banner">
+            <hgroup id="banner" class="banner-content">
+                <h1 class="banner-h1">Beware the Rabbit</h1>
+            </hgroup>
+        </header>
+
+        <footer class="foot">
+            <div class="footer-content">Hawk-Head.com Feb 2014. Jonathan HW Halkett :: Jops.HawkHead@gmail.co.uk</div>
+        </footer>
+
+        <script src="http://code.createjs.com/createjs-2013.09.25.min.js"></script>
+        <script src="src/vendors/jquery.js"></script>
+        <script src="src/controller.js"></script>
+
+        <script>
+            var g_controller;
+            window.onload = function() { g_controller = new Controller(); };
+        </script>
+
+    </body>
+</html>
