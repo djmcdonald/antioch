@@ -9,6 +9,7 @@
         explosion_audio: null,
         // image
         caerbannog: null,
+        grenade_of_antioch: null,
 
         // display objects
         stage: null,
@@ -16,6 +17,9 @@
         scene: null,
         rabbitBitmap: null,
         screenText: null,
+        grenade: null,
+        explosionSpriteSheet: null,
+        explosion: null,
 
         // count
         COUNT: null,
@@ -41,14 +45,16 @@
         },
 
         loadAssets: function() {
-            this.caerbannog        = new Image();
-            var self               = this;
-            this.caerbannog.src    = 'assets/images/rabbit_of_caerbannog.png';
-            this.caerbannog.onload = function() { self.initDisplay.call(self); };
-            this.background_audio  = new Audio('assets/audio/instructions.mp3');
-            this.throw_audio       = new Audio('assets/audio/125.wav');
-            this.worms_audio       = new Audio('assets/audio/holy_hand_grenade.mp3');
-            this.explosion_audio   = new Audio('assets/audio/explosion.mp3');
+            this.caerbannog         = new Image();
+            this.grenade_of_antioch = new Image();
+            var self                = this;
+            this.caerbannog.src     = 'assets/images/rabbit_of_caerbannog.png';
+            this.caerbannog.onload  = function() {  self.grenade_of_antioch.src = 'assets/images/holy_hand_grenade.png';
+                                                    self.grenade_of_antioch.onload  = function() { self.initDisplay.call(self); }; };
+            this.background_audio   = new Audio('assets/audio/instructions.mp3');
+            this.throw_audio        = new Audio('assets/audio/125.wav');
+            this.worms_audio        = new Audio('assets/audio/holy_hand_grenade.mp3');
+            this.explosion_audio    = new Audio('assets/audio/explosion.mp3');
             // set play events
             this.throw_audio.addEventListener('ended', function(e) { self.worms_audio.play(); });
             this.worms_audio.addEventListener('ended', function(e) { self.explosion_audio.play(); });
@@ -56,13 +62,28 @@
 
         initDisplay: function() {
             // create canvas stage
-            this.stage          = new createjs.Stage("demoCanvas");
-            this.canvasElm      = document.getElementById("demoCanvas");
-            this.scene          = this.stage.addChild( new createjs.Container() );
-            this.rabbitBitmap   = this.scene.addChild( new createjs.Bitmap(this.caerbannog) );
-            var bounds          = this.rabbitBitmap.getBounds();
-            this.rabbitBitmap.x -= bounds.width/2;
-            this.rabbitBitmap.y -= bounds.height/2;
+            this.stage           = new createjs.Stage("demoCanvas");
+            this.canvasElm       = document.getElementById("demoCanvas");
+            this.scene           = this.stage.addChild( new createjs.Container() );
+            // rabbit
+            this.rabbitBitmap    = this.scene.addChild( new createjs.Bitmap(this.caerbannog) );
+            var bounds           = this.rabbitBitmap.getBounds();
+            this.rabbitBitmap.x  -= bounds.width/2;
+            this.rabbitBitmap.y  -= bounds.height/2;
+            // grenade
+            this.grenade         = this.scene.addChild( new createjs.Bitmap(this.grenade_of_antioch) );
+            bounds               = this.grenade.getBounds();
+            this.grenade.regX    += bounds.width/2;
+            this.grenade.regY    += (bounds.height/6)*4;
+            this.grenade.visible = false;
+            // explosion
+            this.explosionSpriteSheet = new createjs.SpriteSheet({ images: ['assets/images/explosion_opaque.png'], frames: {width:64, height:64}, animations: {default:[0,24,false]} });
+            this.explosion            = this.scene.addChild( new createjs.Sprite(this.explosionSpriteSheet) );
+            this.explosion.regX       += 32;
+            this.explosion.regY       += 32;
+            this.explosion.scaleX     = this.explosion.scaleY = 8;
+            this.explosion.x          = 250;
+            this.explosion.visible    = false;
             // init display text
             this.screenText = this.scene.addChild( new createjs.Text( "", "bold 95px holy", "red" ) );
             this.screenText.visible = false;
@@ -93,12 +114,40 @@
             this.throw_audio.play();
             // display timed text
             this.initCount();
+            // remove all text animations
+            createjs.Tween.removeTweens(this.screenText);
             this.animateText();
+            this.explosion.visible = false;
+            this.animateGrenade();
         },
 
         animateText: function() {
             this.displayMessage(this.COUNT.shift());
             // this.displayMessage(this.counter.count());
+        },
+
+        animateGrenade: function() {
+            var self = this;
+            this.grenade.x = 200;
+            this.grenade.y = -this.canvasElm.height;
+            this.grenade.rotation = 0;
+            this.grenade.visible = true;
+            createjs.Tween.get( this.grenade, {override:false} )
+                          .wait( 4000 )
+                          .to(  {   y: 100 },
+                                1000,
+                                createjs.Ease.bounceOut )
+                          .wait( 200 )
+                          .to(  {   x: 250,
+                                    rotation: 20 },
+                                250,
+                                createjs.Ease.sineOut )
+                          .call( function() { self.animateExplosion.call(self); } );
+        },
+
+        animateExplosion: function() {
+            this.explosion.visible = true;
+            this.explosion.gotoAndPlay(0);
         },
 
         displayMessage: function(msg) {
@@ -108,7 +157,7 @@
             this.screenText.x = -this.screenText.getMeasuredWidth()/2;
             this.screenText.y = -this.screenText.getMeasuredHeight();
             this.screenText.alpha = 0;
-            createjs.Tween.get( this.screenText, {override:true} )
+            createjs.Tween.get( this.screenText, {override:false} )
                           .to(  {   y:-50,
                                     alpha:1 },
                                 500,
