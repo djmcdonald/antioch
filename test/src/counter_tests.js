@@ -1,8 +1,10 @@
-module("Roman Numeral Service tests");
-test("generates the 'I'", function() {
-    equal(roman_numeral_service.generate(1), 'I');
+module("Counter tests");
+
+test("should return fixed Antioch count", function() {
+    ok(false);
 });
 
 test("should reset counter back to 'One'", function() {
+    ok(false);
 });
 

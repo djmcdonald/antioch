@@ -19,6 +19,7 @@
 
         // count
         COUNT: null,
+        // counter: null,
 
         // input
         KEYS: null,
@@ -32,6 +33,7 @@
             this.background_audio.loop = true;
             // set the count
             this.initCount();
+            // this.counter = new Counter();
             // keyboard events
             var self = this;
             document.onkeydown = function() { self.keyPressHandler.apply(self, arguments); };
@@ -73,6 +75,7 @@
 
         initCount: function() {
             this.COUNT = [ 'One', 'Two', 'Five!', 'Three Sir!', 'Three!' ];
+            // this.counter.reset();
         },
 
         startCount: function()
@@ -95,6 +98,7 @@
 
         animateText: function() {
             this.displayMessage(this.COUNT.shift());
+            // this.displayMessage(this.counter.count());
         },
 
         displayMessage: function(msg) {
