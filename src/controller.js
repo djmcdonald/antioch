@@ -1,6 +1,10 @@
 (function() {
 
-    var Controller = function() { this.init(); };
+    var Controller = function(counter) {
+        this.counter = counter;
+        this.init();
+    };
+
     Controller.prototype = {
         // audio
         background_audio: null,
@@ -22,8 +26,8 @@
         explosion: null,
 
         // count
-        COUNT: null,
-        // counter: null,
+        //COUNT: null,
+        counter: null,
 
         // input
         KEYS: null,
@@ -35,9 +39,6 @@
             // play background audio
             this.background_audio.play();
             this.background_audio.loop = true;
-            // set the count
-            this.initCount();
-            // this.counter = new Counter();
             // keyboard events
             var self = this;
             document.onkeydown = function() { self.keyPressHandler.apply(self, arguments); };
@@ -95,8 +96,7 @@
         },
 
         initCount: function() {
-            this.COUNT = [ 'One', 'Two', 'Five!', 'Three Sir!', 'Three!' ];
-            // this.counter.reset();
+            this.counter.reset();
         },
 
         startCount: function()
@@ -122,8 +122,7 @@
         },
 
         animateText: function() {
-            this.displayMessage(this.COUNT.shift());
-            // this.displayMessage(this.counter.count());
+            this.displayMessage(this.counter.count());
         },
 
         animateGrenade: function() {

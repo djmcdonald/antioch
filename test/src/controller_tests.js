@@ -3,9 +3,9 @@ var controller, counter;
 
 module("Controller tests", {
     setup: function() {
-        controller = new Controller();
-        counter = { count: sinon.stub(), reset: sinon.stub() };
-        controller.counter = counter;
+        counter = { count: sinon.stub(), reset: sinon.spy() };
+        controller = new Controller(counter);
+        //controller.counter = counter;
     },
     teardown: function() {
     }
@@ -22,4 +22,10 @@ test("should engage count animation with correct count", function() {
 
     // test success
     equal(controller.displayMessage.calledWith('Two'), true);
+});
+
+test("init count should reset the counter", function() {
+    controller.initCount();
+
+    ok(counter.reset.calledOnce);
 });
